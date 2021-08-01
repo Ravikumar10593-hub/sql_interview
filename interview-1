@@ -1,0 +1,70 @@
+create table department (
+  department_id INT PRIMARY KEY,
+  department_name VARCHAR(255)
+);
+
+create table employee (
+  employee_id INT PRIMARY KEY,
+  first_name VARCHAR(255),
+  last_name VARCHAR(255),
+  gender VARCHAR(1),
+  position VARCHAR(255),
+  department_id INT,
+  salary INT,
+  FOREIGN KEY (department_id) REFERENCES department(department_id)
+);
+
+
+insert into department values (1, 'IT');
+insert into department values (2, 'Sales');
+
+insert into employee values (2002, 'Super', 'Man', 'M', 'Tester', 1, 75000);
+insert into employee values (2003, 'Jessica', 'Liyers', 'F', 'Architect', 1, 60000);
+insert into employee values (2004, 'Bonnie', 'Adams', 'F', 'Project Manager', 1, 80000);
+insert into employee values (2005, 'James', 'Madison', 'M', 'Software Developer', 1, 55000);
+insert into employee values (2006, 'Michael', 'Greenback', 'M', 'Sales Assistant', 2, 85000);
+insert into employee values (2007, 'Leslie', 'Peters', 'F', 'Sales Engineer', 2, 76000);
+insert into employee values (2008, 'Max', 'Powers', 'M', 'Sales Representative', 2, 59000);
+insert into employee values (2009, 'Stacy', 'Jacobs', 'F', 'Sales Manager', 2, 730000);
+insert into employee values (2010, 'John', 'Henery', 'M', 'Sales Director', 2, 90000);
+
+
+select * from department;
+select * from employee;
+
+--1.return the employee record with the maximun salary
+select * from employee where salary=
+(select max(salary) from employee); 
+--OR
+select * from employee order by salary desc limit 1;
+
+--2.select 2nd highest salary in employee table
+
+select max(salary) from employee where salary 
+NOT in (select max(salary) from employee);
+--OR
+ select salary from employee 
+ order by salary desc limit 1 offset 1;
+ 
+ /* Here offset means how much gap
+    Limit means how much line to print*/
+ 
+
+--3.select range of employee based in id
+
+select * from employee where employee_id between 2004 and 2006;
+
+--OR
+
+select * from employee where employee_id >= 2004 and employee_id <= 2006;
+
+--4.return employee name, highest salary and department
+
+select e.first_name,e.last_name,e.salary,d.department_name
+from employee e inner join department d ON
+e.department_id=d.department_id where salary=(select max(salary) from employee);
+
+--5.return highest salary, employee name, dept name, for each dept
+select e.first_name,e.last_name,e.salary,d.department_name
+from employee e inner join department d ON
+e.department_id=d.department_id where salary IN (select max(salary) from employee group by department_id);
